@@ -1,8 +1,9 @@
+// server.js
 const express = require('express');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const cors = require('cors');
-const path = require('path');
+require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -10,14 +11,13 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public'))); // Serve HTML from /public
 
-// ✅ Clever Cloud MySQL connection
+// ✅ MySQL Connection (Clever Cloud)
 const db = mysql.createConnection({
-  host: 'bz9zfridhbswewaxgshi-mysql.services.clever-cloud.com',
-  user: 'ukrszeatzy7u3bla',
-  password: '9Nbmxaw7XGBsY7eQdYRe',
-  database: 'bz9zfridhbswewaxgshi'
+  host: process.env.DB_HOST || 'bz9zfridhbswewaxgshi-mysql.services.clever-cloud.com',
+  user: process.env.DB_USER || 'ukrszeatzy7u3bla',
+  password: process.env.DB_PASS || '9Nbmxaw7XGBsY7eQdYRe',
+  database: process.env.DB_NAME || 'bz9zfridhbswewaxgshi'
 });
 
 db.connect(err => {
@@ -89,7 +89,12 @@ app.post('/login', (req, res) => {
   });
 });
 
+// Root
+app.get('/', (req, res) => {
+  res.send('✅ PeriChat Backend is running.');
+});
+
 // 🚀 Start server
 app.listen(PORT, () => {
-  console.log(`🚀 Server is running at http://localhost:${PORT}`);
+  console.log(`🚀 Server is running on port ${PORT}`);
 });
